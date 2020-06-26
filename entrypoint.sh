@@ -36,6 +36,13 @@ The following variables are required.
             stack within an account and/or region.
 - CLOUDFRONT_PARAMETER_OVERRIDES: Override values for cloudformation.
 - S3_BUCKET: S3 Bucket for Cloudformation changesets
+
+You sent:
+
+APP_NAME="$APP_NAME"
+STACK_ID="$STACK_ID"
+CLOUDFRONT_PARAMETER_OVERRIDES="$CLOUDFRONT_PARAMETER_OVERRIDES"
+S3_BUCKET="$S3_BUCKET"
 EOF
   exit 1
 fi

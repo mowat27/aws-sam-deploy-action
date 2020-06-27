@@ -82,9 +82,9 @@ case "$action" in
   # Deploy the AWS SAM clouformation template
   "up")
     write_config
-    pipenv run --python "$(which python)" sam deploy \
-      --no-confirm-changeset \
-      --no-fail-on-empty-changeset
+    sam build && sam deploy \
+                    --no-confirm-changeset \
+                    --no-fail-on-empty-changeset
     ;;
 
   # Delete the AWS SAM clouformation stack and all its resources

@@ -19,7 +19,12 @@ $(DOCKER_BUILD_SENTINAL): Dockerfile *.sh
 run: build
 	@docker run --rm -t \
 		-v "$(PWD):/code" \
-		mowat27/aws-sam-deploy-action-actions:dev
+		-e AWS_ACCESS_KEY_ID \
+		-e AWS_SECRET_ACCESS_KEY \
+		-e AWS_DEFAULT_REGION \
+		-e AWS_ASSUME_ROLE_ARN \
+		-e SAM_CONFIG_TOML \
+		mowat27/aws-sam-deploy-action-actions:dev up
 
 sh: build
 	@docker run --rm -it \

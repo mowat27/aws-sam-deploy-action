@@ -24,25 +24,14 @@ EOF
 fi
 
 # Validate deployment params 
-if [[ -z "$S3_BUCKET" || -z "$STACK_ID" || 
-      -z "$APP_NAME" || -z "$CLOUDFORMATION_PARAMETER_OVERRIDES" ]]; then 
+if [[ -z "$SAM_CONFIG_TOML" ]]; then 
   cat >&2 <<EOF 
-ERROR : Missing SAM deployment config variables.
+ERROR : Missing SAM deployment config.
 
-The following variables are required.
+Please set...
 
-- APP_NAME: Name of the serverless application
-- STACK_ID: Unique identifier that is used to name seperate deployments of a 
-            stack within an account and/or region.
-- CLOUDFORMATION_PARAMETER_OVERRIDES: Override values for cloudformation.
-- S3_BUCKET: S3 Bucket for Cloudformation changesets
+- SAM_CONFIG_TOML: Config in toml format.  This will overwrite samconfig.toml
 
-You sent:
-
-APP_NAME="$APP_NAME"
-STACK_ID="$STACK_ID"
-CLOUDFORMATION_PARAMETER_OVERRIDES="$CLOUDFORMATION_PARAMETER_OVERRIDES"
-S3_BUCKET="$S3_BUCKET"
 EOF
   exit 1
 fi
@@ -56,23 +45,6 @@ function output {
   echo "::set-output name=$1::$2"
 }
 
-# shellcheck disable=2001,2086
-function write_config {
-cat > samconfig.toml <<EOF
-version = 0.1
-[default]
-[default.deploy]
-[default.deploy.parameters]
-stack_name = "$STACK_ID-$APP_NAME"
-s3_bucket = "$S3_BUCKET"
-s3_prefix = "$APP_NAME"
-region = "$AWS_DEFAULT_REGION"
-confirm_changeset = false
-capabilities = "CAPABILITY_IAM"
-parameter_overrides = "$(echo $CLOUDFORMATION_PARAMETER_OVERRIDES | sed 's/"/\\"/g')"
-EOF
-}
-
 action=$1; shift
 if [[ -z $action ]]; then 
   echo >&2 "Please pass up, down or a command to run"
@@ -81,7 +53,7 @@ fi
 case "$action" in 
   # Deploy the AWS SAM clouformation template
   "up")
-    write_config
+    echo "$SAM_CONFIG_TOML" > samconfig.toml
     sam build && sam deploy \
                     --no-confirm-changeset \
                     --no-fail-on-empty-changeset

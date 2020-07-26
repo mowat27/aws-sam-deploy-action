@@ -23,19 +23,6 @@ EOF
   exit 1
 fi
 
-# Validate deployment params 
-if [[ -z "$SAM_CONFIG_TOML" ]]; then 
-  cat >&2 <<EOF 
-ERROR : Missing SAM deployment config.
-
-Please set...
-
-- SAM_CONFIG_TOML: Config in toml format.  This will overwrite samconfig.toml
-
-EOF
-  exit 1
-fi
-
 # Enter bash strict mode
 # http://redsymbol.net/articles/unofficial-bash-strict-mode/
 # set -euo pipefail
@@ -53,7 +40,6 @@ fi
 case "$action" in 
   # Deploy the AWS SAM clouformation template
   "up")
-    echo "$SAM_CONFIG_TOML" > samconfig.toml
     sam build && sam deploy \
                     --no-confirm-changeset \
                     --no-fail-on-empty-changeset

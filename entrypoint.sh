@@ -25,7 +25,7 @@ fi
 
 # Validate deployment params 
 if [[ -z "$S3_BUCKET" || -z "$STACK_ID" || 
-      -z "$APP_NAME" || -z "$CLOUDFRONT_PARAMETER_OVERRIDES" ]]; then 
+      -z "$APP_NAME" || -z "$CLOUDFORMATION_PARAMETER_OVERRIDES" ]]; then 
   cat >&2 <<EOF 
 ERROR : Missing SAM deployment config variables.
 
@@ -34,14 +34,14 @@ The following variables are required.
 - APP_NAME: Name of the serverless application
 - STACK_ID: Unique identifier that is used to name seperate deployments of a 
             stack within an account and/or region.
-- CLOUDFRONT_PARAMETER_OVERRIDES: Override values for cloudformation.
+- CLOUDFORMATION_PARAMETER_OVERRIDES: Override values for cloudformation.
 - S3_BUCKET: S3 Bucket for Cloudformation changesets
 
 You sent:
 
 APP_NAME="$APP_NAME"
 STACK_ID="$STACK_ID"
-CLOUDFRONT_PARAMETER_OVERRIDES="$CLOUDFRONT_PARAMETER_OVERRIDES"
+CLOUDFORMATION_PARAMETER_OVERRIDES="$CLOUDFORMATION_PARAMETER_OVERRIDES"
 S3_BUCKET="$S3_BUCKET"
 EOF
   exit 1
@@ -69,7 +69,7 @@ s3_prefix = "$APP_NAME"
 region = "$AWS_DEFAULT_REGION"
 confirm_changeset = false
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = "$(echo $CLOUDFRONT_PARAMETER_OVERRIDES | sed 's/"/\\"/g')"
+parameter_overrides = "$(echo $CLOUDFORMATION_PARAMETER_OVERRIDES | sed 's/"/\\"/g')"
 EOF
 }
 
